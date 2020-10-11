@@ -1,0 +1,17 @@
+extends layout
+
+block heading
+  em= headingText
+
+block content
+  form(action='', method='POST')
+    label(for='username') Username: 
+    input(type='text', name='username', id='username' size='10' value=(undefined === username ? '' : username), required='required')
+    br
+    button(type='submit', name='action', value='survey') Survey
+    button(type='submit', name='action', value='match') Match
+
+  if errors
+    ul
+      for error in errors
+        li= error.msg

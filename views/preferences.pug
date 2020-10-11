@@ -1,0 +1,8 @@
+extends layout
+
+block heading
+  Your current rendering preference is <em>renderingPreference</em>
+
+block content
+  p
+    form(action='/survey/control', method='POST')

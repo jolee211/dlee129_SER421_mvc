@@ -1,0 +1,25 @@
+extends layout
+
+block heading
+  Survey Page: #{page} for user #{username}
+  br
+  br
+  | #{questionText}
+block content
+  p
+    a(href='/preferences') Set your rendering preferences
+  p
+    form(action='/survey/submitAnswer', method='POST')
+      input(type='hidden', name='questionId', value=questionId)
+      input(type='hidden', name='page', value=page)
+      each val in choices
+        if savedAnswer
+          input(type='radio', name='answer', value=val, checked=(savedAnswer === val))
+          | !{val}
+        else
+          input(type='radio', name='answer', value=val)
+          | !{val}
+        br
+      if hasPrev
+        button(type='submit' name='submit' value='previous') Previous
+      button(type='submit' name='submit' value='next') Next

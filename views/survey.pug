@@ -7,7 +7,7 @@ block heading
   | #{questionText}
 block content
   p
-    a(href='/preferences') Set your rendering preferences
+    a(href='/survey/preferences?currentQuestionIndex=' + (page-1)) Set your rendering preferences
   p
     form(action='/survey/submitAnswer', method='POST')
       input(type='hidden', name='questionId', value=questionId)

@@ -22,6 +22,6 @@ router.get('/preferences', survey_controller.displayPreferences);
 router.post('/match/:username', survey_controller.match_username);
 
 // POST request for setting the rendering preferences page and returning to current question
-router.post('/preferences/update/:isVertical', survey_controller.preferences_update);
+router.post('/setpreferences', survey_controller.setPreferences);
 
 module.exports = router;

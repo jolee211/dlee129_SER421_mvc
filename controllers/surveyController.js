@@ -1,7 +1,8 @@
 let Model = require('../models/model');
+const validator = require('express-validator');
+const url = require('url');
 let landingTitle = 'MVC Ex Solution Landing Page';
 let surveyTitle = 'Survey';
-const validator = require('express-validator');
 
 function isAlpha(string) {
     let chars = string.split('');
@@ -87,6 +88,7 @@ exports.displayFirstQuestion = [
                 // save variables into user session
                 req.session.questions = questions;
                 req.session.answers = answers;
+                req.session.currentIndex = 0;
                 res.render('survey', { 
                     title: surveyTitle,
                     page: 1,
@@ -127,11 +129,22 @@ exports.submitAnswer = function(req, res) {
     }
 };
 
+// Display preferences page
 exports.displayPreferences = function(req, res) {
+    const queryObject = url.parse(req.url, true).query;
+    console.log(queryObject);
     res.render('preferences', { 
         title: 'SER421 MVC Set Preferences',
         renderingPreference: Model.getRenderingPreference(),
+        currentQuestionIndex: queryObject.currentQuestionIndex
      });
+};
+
+// Set the rendering preferences page and return to current question
+exports.setPreferences = function(req, res) {
+    let body = req.body;
+    Model.setRenderingPreference(body.preference);
+    renderQuestionPage(req, res, parseInt(body.currentQuestionIndex) + 0);
 };
 
 // Submit an answer to the current question and go to the previous question
@@ -142,10 +155,4 @@ exports.survey_question_prev = function(req, res) {
 // Determine number of matches for current user
 exports.match_username = function(req, res) {
     res.send('NOT IMPLEMENTED: Match user POST');
-};
-
-// Display preferences page
-// Set the rendering preferences page and return to current question
-exports.preferences_update = function(req, res) {
-    res.send('NOT IMPLEMENTED: Preferences update POST');
 };

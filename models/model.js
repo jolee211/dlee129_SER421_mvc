@@ -1,4 +1,6 @@
 const fs = require('fs');
+const VERTICAL = 'vertical';
+const HORIZONTAL = 'horizontal';
 let questions;
 let answers;
 
@@ -65,9 +67,13 @@ let renderIsVertical = false;
 
 function getRenderingPreference() {
     if (renderIsVertical) {
-        return 'vertical';
+        return VERTICAL;
     }
-    return 'horizontal';
+    return HORIZONTAL;
+}
+
+function setRenderingPreference(preference) {
+    renderIsVertical = (preference === VERTICAL);
 }
 
 module.exports.getRenderingPreference = getRenderingPreference;
@@ -77,3 +83,4 @@ module.exports.getPreviousAnswer = getPreviousAnswer;
 module.exports.getChoicesForQuestion = getChoicesForQuestion;
 module.exports.saveAnswer = saveAnswer;
 module.exports.numberOfQuestions = numberOfQuestions;
+module.exports.setRenderingPreference = setRenderingPreference;

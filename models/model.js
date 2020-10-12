@@ -65,22 +65,17 @@ function numberOfQuestions(questions) {
 
 let renderIsVertical = false;
 
-function getRenderingPreference() {
+function getDefaultRenderingPreference() {
     if (renderIsVertical) {
         return VERTICAL;
     }
     return HORIZONTAL;
 }
 
-function setRenderingPreference(preference) {
-    renderIsVertical = (preference === VERTICAL);
-}
-
-module.exports.getRenderingPreference = getRenderingPreference;
+module.exports.getDefaultRenderingPreference = getDefaultRenderingPreference;
 module.exports.getAllQuestions = getAllQuestions;
 module.exports.getAllAnswers = getAllAnswers;
 module.exports.getPreviousAnswer = getPreviousAnswer;
 module.exports.getChoicesForQuestion = getChoicesForQuestion;
 module.exports.saveAnswer = saveAnswer;
 module.exports.numberOfQuestions = numberOfQuestions;
-module.exports.setRenderingPreference = setRenderingPreference;

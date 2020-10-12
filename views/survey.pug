@@ -19,7 +19,8 @@ block content
         else
           input(type='radio', name='answer', value=val)
           | !{val}
-        br
+        if renderDirection === 'vertical'
+          br
       if hasPrev
         button(type='submit' name='submit' value='previous') Previous
       button(type='submit' name='submit' value='next') Next

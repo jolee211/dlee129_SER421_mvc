@@ -4,6 +4,28 @@ const url = require('url');
 let landingTitle = 'MVC Ex Solution Landing Page';
 let surveyTitle = 'Survey';
 
+// Returns an object with the cookies' names as keys
+const getAppCookies = (req) => {
+    // we extract the raw cookies from the request headers
+    const rawCookies = req.headers.cookie.split('; ');
+    // rawCookies = ['surveyApp=secretcookie', 'analytics_cookie=beacon']
+    const parsedCookies = {};
+    rawCookies.forEach((rawCookie) => {
+        const parsedCookie = rawCookie.split('=');
+        // parsedCookie = ['surveyApp', 'secretCookie']
+        parsedCookies[parsedCookie[0]] = parsedCookie[1];
+    });
+    return parsedCookies;
+}
+
+// Returns the value of the renderingPreference cookie
+const getRenderingPreference = (req, res) => getAppCookies(req, res)['renderingPreference'];
+
+// Creates a renderingPreference cookie
+const sendRenderingPreferenceCookie = (renderingPreference, res) => {
+    res.cookie('renderingPreference', renderingPreference);
+}
+
 function isAlpha(string) {
     let chars = string.split('');
 
@@ -30,7 +52,7 @@ function getQuestions(req) {
     return questions;
 }
 
-function renderQuestionPage(req, res, currentIndex) {
+function renderQuestionPage(req, res, currentIndex, renderingPreference) {
     let questions = getQuestions(req);
     let currentQuestion = questions[currentIndex];
     let questionId = currentQuestion.id;
@@ -44,7 +66,8 @@ function renderQuestionPage(req, res, currentIndex) {
         questionId: questionId,
         savedAnswer: Model.getPreviousAnswer(username, questionId),
         choices: choices,
-        hasPrev: currentIndex > 0
+        hasPrev: currentIndex > 0,
+        renderDirection: renderingPreference
      });
 }
 
@@ -105,6 +128,17 @@ exports.displayFirstQuestion = [
     }
 ];
 
+function getCurrentRenderingPreference(req, res) {
+    let renderingPreference = getRenderingPreference(req, res);
+    if (renderingPreference) {
+        return renderingPreference;
+    }
+    
+    let defaultRenderingPreference = Model.getDefaultRenderingPreference();
+    sendRenderingPreferenceCookie(defaultRenderingPreference, res);
+    return defaultRenderingPreference;
+}
+
 // Submit an answer to the current question and go to the next question
 exports.submitAnswer = function(req, res) {
     let body = req.body;
@@ -119,13 +153,13 @@ exports.submitAnswer = function(req, res) {
     if (body.submit === 'next') {
         if (currentIndex < getQuestions(req).length - 1) {
             currentIndex++;
-            renderQuestionPage(req, res, currentIndex);
+            renderQuestionPage(req, res, currentIndex, getRenderingPreference(req, res));
         } else {
             res.send('NOT IMPLEMENTED: Submit answer survey finished');
         }
     } else if (body.submit === 'previous' && currentIndex > 0) {
         currentIndex--;
-        renderQuestionPage(req, res, currentIndex);
+        renderQuestionPage(req, res, currentIndex, getRenderingPreference(req, res));
     }
 };
 
@@ -135,7 +169,7 @@ exports.displayPreferences = function(req, res) {
     console.log(queryObject);
     res.render('preferences', { 
         title: 'SER421 MVC Set Preferences',
-        renderingPreference: Model.getRenderingPreference(),
+        renderingPreference: getCurrentRenderingPreference(req, res),
         currentQuestionIndex: queryObject.currentQuestionIndex
      });
 };
@@ -143,8 +177,8 @@ exports.displayPreferences = function(req, res) {
 // Set the rendering preferences page and return to current question
 exports.setPreferences = function(req, res) {
     let body = req.body;
-    Model.setRenderingPreference(body.preference);
-    renderQuestionPage(req, res, parseInt(body.currentQuestionIndex) + 0);
+    sendRenderingPreferenceCookie(body.preference, res);
+    renderQuestionPage(req, res, parseInt(body.currentQuestionIndex) + 0, body.preference);
 };
 
 // Submit an answer to the current question and go to the previous question

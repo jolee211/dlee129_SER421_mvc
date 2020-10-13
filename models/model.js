@@ -30,17 +30,25 @@ function getKeyFromComposite(username, questionId) {
 function getAllAnswers() {
     if (!answers) {
         let json = readJsonFromFile('answers.json');
-        answers = json.answers.reduce((map, obj) => {
-            map[getKeyFromAnswer(obj)] = obj;
+        answers = json.reduce((map, obj) => {
+            map.set(getKeyFromAnswer(obj), obj);
             return map;
-        }, {});
+        }, new Map());
         console.log(answers);
     }
     return answers;
 }
 
+function persistAllAnswers(f) {
+    if (answers) {
+        let answersArray = Array.from(answers.values());
+        let data = JSON.stringify(answersArray, null, 2);
+        fs.writeFile('answers.json', data, f);
+    }
+}
+
 function getPreviousAnswer(username, questionId) {
-    let savedAnswer = getAllAnswers()[getKeyFromComposite(username, questionId)];
+    let savedAnswer = getAllAnswers().get(getKeyFromComposite(username, questionId));
     if (savedAnswer) {
         return savedAnswer.answer;
     }
@@ -51,11 +59,11 @@ function getChoicesForQuestion(question) {
 }
 
 function saveAnswer(username, questionId, answer) {
-    getAllAnswers()[getKeyFromComposite(username, questionId)] = {
+    getAllAnswers().set(getKeyFromComposite(username, questionId), {
         username: username,
         questionId: questionId,
         answer: answer
-    };
+    });
     console.log(getAllAnswers());
 }
 
@@ -79,3 +87,4 @@ module.exports.getPreviousAnswer = getPreviousAnswer;
 module.exports.getChoicesForQuestion = getChoicesForQuestion;
 module.exports.saveAnswer = saveAnswer;
 module.exports.numberOfQuestions = numberOfQuestions;
+module.exports.persistAllAnswers = persistAllAnswers;

@@ -39,7 +39,15 @@ function isAlpha(string) {
 
 // Display landing page
 exports.displayLanding = function(req, res) {
-    res.render('index', { title: landingTitle, headingText: landingTitle });
+    if (req.session.username) {
+        res.render('index', { 
+            title: landingTitle, 
+            headingText: landingTitle, 
+            username: req.session.username 
+        });
+    } else {
+        res.render('index', { title: landingTitle, headingText: landingTitle });
+    }
 };
 
 function getQuestions(req) {
@@ -98,29 +106,10 @@ exports.displayFirstQuestion = [
             // read in the saved answers for all users
             let answers = Model.getAllAnswers();
             if (questions.length > 0) {
-                // find all the answers for current user
-                // then find the answer for the first question
-                let firstQuestion = questions[0];
-                let questionId = firstQuestion.id;
-                let savedAnswer = Model.getPreviousAnswer(username, questionId);
-                console.log(`Saved answer for first question for ${username}: ${savedAnswer}`);
-
-                let choices = Model.getChoicesForQuestion(firstQuestion);
-                console.log(choices);
-
                 // save variables into user session
                 req.session.questions = questions;
                 req.session.answers = answers;
-                req.session.currentIndex = 0;
-                res.render('survey', { 
-                    title: surveyTitle,
-                    page: 1,
-                    questionText: firstQuestion.question,
-                    username: username,
-                    questionId: questionId,
-                    savedAnswer: savedAnswer,
-                    choices: choices
-                 });
+                renderQuestionPage(req, res, 0, getCurrentRenderingPreference(req, res));
             } else {
                 throw new Error('There is no survey defined');
             }
@@ -139,6 +128,13 @@ function getCurrentRenderingPreference(req, res) {
     return defaultRenderingPreference;
 }
 
+function renderThankYouPage(req, res) {
+    res.render('thanks', { 
+        title: surveyTitle,
+        username: req.session.username,
+    });
+}
+
 // Submit an answer to the current question and go to the next question
 exports.submitAnswer = function(req, res) {
     let body = req.body;
@@ -155,7 +151,11 @@ exports.submitAnswer = function(req, res) {
             currentIndex++;
             renderQuestionPage(req, res, currentIndex, getRenderingPreference(req, res));
         } else {
-            res.send('NOT IMPLEMENTED: Submit answer survey finished');
+            Model.persistAllAnswers((err) => {
+                if (err) throw err;
+                console.log('Answers persisted');
+            });
+            renderThankYouPage(req, res);
         }
     } else if (body.submit === 'previous' && currentIndex > 0) {
         currentIndex--;

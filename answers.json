@@ -1,99 +1,122 @@
-{
-    "answers": [
-        {
-            "username": "jolee",
-            "questionId": "QuesGrailCapital",
-            "answer": "I don't know that!"
-        },
-        {
-            "username": "jolee",
-            "questionId": "QuesGrailColor",
-            "answer": "Red"
-        },
-        {
-            "username": "onerousferocious",
-            "questionId": "QuesGrailName",
-            "answer": "Guineviere"
-        },
-        {
-            "username": "onerousferocious",
-            "questionId": "QuesGrailQuest",
-            "answer": "To find the Knights who say Ni!"
-        },
-        {
-            "username": "onerousferocious",
-            "questionId": "QuesGrailColor",
-            "answer": "Blue"
-        },
-        {
-            "username": "onerousferocious",
-            "questionId": "QuesGrailCapital",
-            "answer": "I don't know that!"
-        },
-        {
-            "username": "ulnadrag",
-            "questionId": "QuesGrailName",
-            "answer": "Guineviere"
-        },
-        {
-            "username": "ulnadrag",
-            "questionId": "QuesGrailQuest",
-            "answer": "To find the Grail"
-        },
-        {
-            "username": "ulnadrag",
-            "questionId": "QuesGrailColor",
-            "answer": "Blue"
-        },
-        {
-            "username": "ulnadrag",
-            "questionId": "QuesGrailCapital",
-            "answer": "I don't know that!"
-        },
-        {
-            "username": "sdraughtjury",
-            "questionId": "QuesGrailColor",
-            "answer": "Blue"
-        },
-        {
-            "username": "sdraughtjury",
-            "questionId": "QuesGrailCapital",
-            "answer": "I don't know that!"
-        },
-        {
-            "username": "strangerunknown",
-            "questionId": "QuesGrailName",
-            "answer": "Lancelot"
-        },
-        {
-            "username": "strangerunknown",
-            "questionId": "QuesGrailQuest",
-            "answer": "To slay the rabbit "
-        },
-        {
-            "username": "strangerunknown",
-            "questionId": "QuesGrailColor",
-            "answer": "I don't know"
-        },
-        {
-            "username": "strangerunknown",
-            "questionId": "QuesGrailCapital",
-            "answer": "I don't know that!"
-        },
-        {
-            "username": "mothabcd",
-            "questionId": "QuesGrailName",
-            "answer": "Guineviere"
-        },
-        {
-            "username": "mothabcd",
-            "questionId": "QuesGrailQuest",
-            "answer": "To find the Grail"
-        },
-        {
-            "username": "mothabcd",
-            "questionId": "QuesGrailCapital",
-            "answer": "I don't know that!"
-        }
-    ]
-}
+[
+  {
+    "username": "jolee",
+    "questionId": "QuesGrailCapital",
+    "answer": "I don't know that!"
+  },
+  {
+    "username": "jolee",
+    "questionId": "QuesGrailColor",
+    "answer": "Red"
+  },
+  {
+    "username": "onerousferocious",
+    "questionId": "QuesGrailName",
+    "answer": "Guineviere"
+  },
+  {
+    "username": "onerousferocious",
+    "questionId": "QuesGrailQuest",
+    "answer": "To find the Knights who say Ni!"
+  },
+  {
+    "username": "onerousferocious",
+    "questionId": "QuesGrailColor",
+    "answer": "Blue"
+  },
+  {
+    "username": "onerousferocious",
+    "questionId": "QuesGrailCapital",
+    "answer": "I don't know that!"
+  },
+  {
+    "username": "ulnadrag",
+    "questionId": "QuesGrailName",
+    "answer": "Guineviere"
+  },
+  {
+    "username": "ulnadrag",
+    "questionId": "QuesGrailQuest",
+    "answer": "To find the Grail"
+  },
+  {
+    "username": "ulnadrag",
+    "questionId": "QuesGrailColor",
+    "answer": "Blue"
+  },
+  {
+    "username": "ulnadrag",
+    "questionId": "QuesGrailCapital",
+    "answer": "I don't know that!"
+  },
+  {
+    "username": "sdraughtjury",
+    "questionId": "QuesGrailColor",
+    "answer": "Blue"
+  },
+  {
+    "username": "sdraughtjury",
+    "questionId": "QuesGrailCapital",
+    "answer": "I don't know that!"
+  },
+  {
+    "username": "strangerunknown",
+    "questionId": "QuesGrailName",
+    "answer": "Lancelot"
+  },
+  {
+    "username": "strangerunknown",
+    "questionId": "QuesGrailQuest",
+    "answer": "To slay the rabbit "
+  },
+  {
+    "username": "strangerunknown",
+    "questionId": "QuesGrailColor",
+    "answer": "I don't know"
+  },
+  {
+    "username": "strangerunknown",
+    "questionId": "QuesGrailCapital",
+    "answer": "I don't know that!"
+  },
+  {
+    "username": "mothabcd",
+    "questionId": "QuesGrailName",
+    "answer": "Guineviere"
+  },
+  {
+    "username": "mothabcd",
+    "questionId": "QuesGrailQuest",
+    "answer": "To find the Grail"
+  },
+  {
+    "username": "mothabcd",
+    "questionId": "QuesGrailCapital",
+    "answer": "I don't know that!"
+  },
+  {
+    "username": "iceskatesuttermot",
+    "questionId": "Facebook",
+    "answer": "2006"
+  },
+  {
+    "username": "iceskatesuttermot",
+    "questionId": "Restaurants",
+    "answer": "2"
+  },
+  {
+    "username": "onerousferocious",
+    "questionId": "Facebook",
+    "answer": "2003"
+  },
+  {
+    "username": "onerousferocious",
+    "questionId": "Restaurants",
+    "answer": "4+"
+  },
+  {
+    "username": "onerousferocious",
+    "questionId": "Capital",
+    "answer": "Glasgow"
+  }
+]

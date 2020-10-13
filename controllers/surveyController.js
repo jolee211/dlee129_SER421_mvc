@@ -168,14 +168,20 @@ exports.submitAnswer = function(req, res) {
             currentIndex++;
             renderQuestionPage(req, res, currentIndex, getRenderingPreference(req, res));
         } else {
-            Model.persistAllAnswers((err) => {
-                if (err) throw err;
-                console.log('Answers persisted');
+            let persistPromise = new Promise((resolve, reject) => {
+                Model.persistAllAnswers((err) => {
+                    if (err) reject(err);
+                    console.log('Answers persisted');
+                });
+                resolve('Answers persisted');
+            })
+            persistPromise.then(() => {
+                let username = req.session.username;
+                req.session.destroy();
+                renderThankYouPage(req, res, username);
+            }, (err) => {
+                throw err;
             });
-            
-            let username = req.session.username;
-            req.session.destroy();
-            renderThankYouPage(req, res, username);
         }
     } else if (body.submit === 'previous' && currentIndex > 0) {
         currentIndex--;
@@ -219,24 +225,26 @@ function match(req, res) {
 
     let answersForCurrentUser = Model.getAllAnswersForUser(username);
     let userMatches = new Map();
-    answersForCurrentUser.forEach((answerForCurrentUser, i, arr) => {
-        // get all the answers for same question for other users
-        Model.getAllAnswersForQuestion(answerForCurrentUser.questionId)
-            // filter for matching answer
-            .filter(currentAnswer => currentAnswer.answer === answerForCurrentUser.answer)
-            // filter out the user we're matching
-            .filter(currentAnswer => currentAnswer.username != username)
-            // count matches of other users to current user
-            .forEach((currentAnswer, i) => {
-                if (userMatches.has(currentAnswer.username)) {
-                    let matches = userMatches.get(currentAnswer.username);
-                    matches++;
-                    userMatches.set(currentAnswer.username, matches);
-                } else {
-                    userMatches.set(currentAnswer.username, 1);
-                }
-            });
-    });
+    if (answersForCurrentUser) {
+        answersForCurrentUser.forEach((answerForCurrentUser, i, arr) => {
+            // get all the answers for same question for other users
+            Model.getAllAnswersForQuestion(answerForCurrentUser.questionId)
+                // filter for matching answer
+                .filter(currentAnswer => currentAnswer.answer === answerForCurrentUser.answer)
+                // filter out the user we're matching
+                .filter(currentAnswer => currentAnswer.username != username)
+                // count matches of other users to current user
+                .forEach((currentAnswer, i) => {
+                    if (userMatches.has(currentAnswer.username)) {
+                        let matches = userMatches.get(currentAnswer.username);
+                        matches++;
+                        userMatches.set(currentAnswer.username, matches);
+                    } else {
+                        userMatches.set(currentAnswer.username, 1);
+                    }
+                });
+        });
+    }
     let matches = [];
     // sort the userMatches map from highest match to lowest
     let userMatchesSortedDesc = new Map([...userMatches.entries()]

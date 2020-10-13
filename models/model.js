@@ -2,7 +2,7 @@ const fs = require('fs');
 const VERTICAL = 'vertical';
 const HORIZONTAL = 'horizontal';
 let questions;
-let answers;
+let answers = new Map();
 let answersByUsername;
 
 function readJsonFromFile(filename) {
@@ -28,41 +28,54 @@ function getKeyFromComposite(username, questionId) {
     return username + questionId;
 }
 
+function mapAnswersByUsername() {
+    // store an array of answers by username in another map
+    answersByUsername = new Map();
+    if (answers) {
+        answers.forEach((obj) => {
+            let arr;
+            let key = obj.username;
+            if (answersByUsername.has(key)) {
+                arr = answersByUsername.get(key);
+                arr.push(obj);
+            } else {
+                arr = [obj];
+            }
+            answersByUsername.set(key, arr);
+        });
+        console.log(answersByUsername);
+    }
+}
+
+function mapAnswersByQuestionId() {
+    // store an array of answers by questionId in another map
+    answersByQuestionId = new Map();
+    if (answers) {
+        answers.forEach((obj) => {
+            let arr2;
+            let key2 = obj.questionId;
+            if (answersByQuestionId.has(key2)) {
+                arr2 = answersByQuestionId.get(key2);
+                arr2.push(obj);
+            } else {
+                arr2 = [obj];
+            }
+            answersByQuestionId.set(key2, arr2);
+        });
+        console.log(answersByQuestionId);
+    }
+}
+
 function readAllAnswersFromFile() {
     let json = readJsonFromFile('answers.json');
-    answersByUsername = new Map();
-    answersByQuestionId = new Map();
     answers = json.reduce((map, obj) => {
         // store each answer in a map (key=username + questionId)
         map.set(getKeyFromAnswer(obj), obj);
-
-        // store an array of answers by username in another map
-        let arr;
-        let key = obj.username;
-        if (answersByUsername.has(key)) {
-            arr = answersByUsername.get(key);
-            arr.push(obj);
-        } else {
-            arr = [obj];
-        }
-        answersByUsername.set(key, arr);
-
-        // store an array of answers by questionId in another map
-        let arr2;
-        let key2 = obj.questionId;
-        if (answersByQuestionId.has(key2)) {
-            arr2 = answersByQuestionId.get(key2);
-            arr2.push(obj);
-        } else {
-            arr2 = [obj];
-        }
-        answersByQuestionId.set(key2, arr2);
-
         return map;
     }, new Map());
     console.log(answers);
-    console.log(answersByUsername);
-    console.log(answersByQuestionId);
+    mapAnswersByUsername();
+    mapAnswersByQuestionId();
 }
 
 function getAllAnswers() {
@@ -77,6 +90,8 @@ function persistAllAnswers(f) {
         let answersArray = Array.from(answers.values());
         let data = JSON.stringify(answersArray, null, 2);
         fs.writeFile('answers.json', data, f);
+        mapAnswersByQuestionId();
+        mapAnswersByUsername();
     }
 }
 

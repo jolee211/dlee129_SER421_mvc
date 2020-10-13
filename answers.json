@@ -97,12 +97,12 @@
   {
     "username": "iceskatesuttermot",
     "questionId": "Facebook",
-    "answer": "2006"
+    "answer": "2003"
   },
   {
     "username": "iceskatesuttermot",
     "questionId": "Restaurants",
-    "answer": "3"
+    "answer": "4+"
   },
   {
     "username": "onerousferocious",
@@ -136,6 +136,37 @@
   },
   {
     "username": "iceskatesuttermot",
-    "questionId": "Capital"
+    "questionId": "Capital",
+    "answer": "Edinburgh"
+  },
+  {
+    "username": "gglee",
+    "questionId": "Facebook",
+    "answer": "2004"
+  },
+  {
+    "username": "gglee",
+    "questionId": "Restaurants",
+    "answer": "4+"
+  },
+  {
+    "username": "gglee",
+    "questionId": "Capital",
+    "answer": "Glasgow"
+  },
+  {
+    "username": "bhlee",
+    "questionId": "Facebook",
+    "answer": "2005"
+  },
+  {
+    "username": "bhlee",
+    "questionId": "Restaurants",
+    "answer": "4+"
+  },
+  {
+    "username": "bhlee",
+    "questionId": "Capital",
+    "answer": "Perth"
   }
 ]

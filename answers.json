@@ -102,7 +102,7 @@
   {
     "username": "iceskatesuttermot",
     "questionId": "Restaurants",
-    "answer": "2"
+    "answer": "3"
   },
   {
     "username": "onerousferocious",
@@ -122,15 +122,20 @@
   {
     "username": "ulnadrag",
     "questionId": "Facebook",
-    "answer": "2004"
+    "answer": "2003"
   },
   {
     "username": "ulnadrag",
-    "questionId": "Restaurants"
+    "questionId": "Restaurants",
+    "answer": "4+"
   },
   {
     "username": "ulnadrag",
     "questionId": "Capital",
-    "answer": "Glasgow"
+    "answer": "Edinburgh"
+  },
+  {
+    "username": "iceskatesuttermot",
+    "questionId": "Capital"
   }
 ]

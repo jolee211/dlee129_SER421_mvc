@@ -26,17 +26,6 @@ const sendRenderingPreferenceCookie = (renderingPreference, res) => {
     res.cookie('renderingPreference', renderingPreference);
 }
 
-function isAlpha(string) {
-    let chars = string.split('');
-
-    chars.forEach((c) => {
-        if (!(/[a-zA-Z]/).test(c)) {
-            return false;
-        }
-    });
-    return true;
-}
-
 // Display landing page
 exports.displayLanding = function(req, res) {
     let username;
@@ -88,18 +77,22 @@ function renderQuestionPage(req, res, currentIndex, renderingPreference) {
      });
 }
 
-// Display the first page of the survey for a user
-exports.displayFirstQuestion = [
+const usernameValidatorForSpace = 
     // Validate that there are no spaces
     validator.check('username')
         .custom(value => !value.includes(' '))
-        .withMessage('No spaces are allowed in the username'),
+        .withMessage('No spaces are allowed in the username');
+
+const usernameValidatorForAlpha = 
     // Validate that usernames only allow combinations of uppercase and lowercase letters
     validator.body('username',
         'Usernames are only allowed with a combination of uppercase and lowercase letters')
-        .isAlpha(),
-    // Process request after validation and sanitization
-    (req, res, next) => {
+        .isAlpha();
+
+exports.processAction = [
+    usernameValidatorForSpace,
+    usernameValidatorForAlpha,
+    (req, res) => {
         // Extract the validation errors from a request
         const errors = validator.validationResult(req);
         let username = req.body.username;
@@ -109,22 +102,33 @@ exports.displayFirstQuestion = [
             res.render('index', { title: landingTitle, headingText: landingTitle, 
                 username: username, errors: errors.array() });
             return;
-        } else {
-            // read in the survey questions
-            let questions = Model.getAllQuestions();
-            // read in the saved answers for all users
-            let answers = Model.getAllAnswers();
-            if (questions.length > 0) {
-                // save variables into user session
-                req.session.questions = questions;
-                req.session.answers = answers;
-                renderQuestionPage(req, res, 0, getCurrentRenderingPreference(req, res));
-            } else {
-                throw new Error('There is no survey defined');
-            }
+        }
+
+        let body = req.body;
+        if (body.action === 'survey') {
+            displayFirstQuestion(req, res, errors);
+        } else if (body.action === 'match') {
+            match(req, res);
         }
     }
 ];
+
+// Display the first page of the survey for a user
+    // Process request after validation and sanitization
+function displayFirstQuestion(req, res) {
+    // read in the survey questions
+    let questions = Model.getAllQuestions();
+    // read in the saved answers for all users
+    let answers = Model.getAllAnswers();
+    if (questions.length > 0) {
+        // save variables into user session
+        req.session.questions = questions;
+        req.session.answers = answers;
+        renderQuestionPage(req, res, 0, getCurrentRenderingPreference(req, res));
+    } else {
+        throw new Error('There is no survey defined');
+    }
+}
 
 function getCurrentRenderingPreference(req, res) {
     let renderingPreference = getRenderingPreference(req, res);
@@ -206,10 +210,10 @@ exports.setPreferences = function(req, res) {
 };
 
 // Determine number of matches for current user
-exports.match_username = function(req, res) {
+function match(req, res) {
     if (!req.session.username) {
         res.render('improper');
         return;
     }
     res.send('NOT IMPLEMENTED: Match user POST');
-};
+}

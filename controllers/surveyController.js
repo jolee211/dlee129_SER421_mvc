@@ -39,11 +39,20 @@ function isAlpha(string) {
 
 // Display landing page
 exports.displayLanding = function(req, res) {
+    let username;
     if (req.session.username) {
+        username = req.session.username;
+    } 
+    if (!username) {
+        const queryObject = url.parse(req.url, true).query;
+        console.log(queryObject);
+        username = queryObject.username;
+    }
+    if (username) {
         res.render('index', { 
             title: landingTitle, 
             headingText: landingTitle, 
-            username: req.session.username 
+            username: username
         });
     } else {
         res.render('index', { title: landingTitle, headingText: landingTitle });
@@ -128,15 +137,19 @@ function getCurrentRenderingPreference(req, res) {
     return defaultRenderingPreference;
 }
 
-function renderThankYouPage(req, res) {
+function renderThankYouPage(req, res, username) {
     res.render('thanks', { 
         title: surveyTitle,
-        username: req.session.username,
+        username: username,
     });
 }
 
 // Submit an answer to the current question and go to the next question
 exports.submitAnswer = function(req, res) {
+    if (!req.session.username) {
+        res.render('improper');
+        return;
+    }
     let body = req.body;
     // take current answer and save it
     Model.saveAnswer(req.session.username, body.questionId, body.answer);
@@ -155,7 +168,10 @@ exports.submitAnswer = function(req, res) {
                 if (err) throw err;
                 console.log('Answers persisted');
             });
-            renderThankYouPage(req, res);
+            
+            let username = req.session.username;
+            req.session.destroy();
+            renderThankYouPage(req, res, username);
         }
     } else if (body.submit === 'previous' && currentIndex > 0) {
         currentIndex--;
@@ -165,6 +181,10 @@ exports.submitAnswer = function(req, res) {
 
 // Display preferences page
 exports.displayPreferences = function(req, res) {
+    if (!req.session.username) {
+        res.render('improper');
+        return;
+    }
     const queryObject = url.parse(req.url, true).query;
     console.log(queryObject);
     res.render('preferences', { 
@@ -176,17 +196,20 @@ exports.displayPreferences = function(req, res) {
 
 // Set the rendering preferences page and return to current question
 exports.setPreferences = function(req, res) {
+    if (!req.session.username) {
+        res.render('improper');
+        return;
+    }
     let body = req.body;
     sendRenderingPreferenceCookie(body.preference, res);
     renderQuestionPage(req, res, parseInt(body.currentQuestionIndex) + 0, body.preference);
 };
 
-// Submit an answer to the current question and go to the previous question
-exports.survey_question_prev = function(req, res) {
-    res.send('NOT IMPLEMENTED: Submit answer prev POST');
-};
-
 // Determine number of matches for current user
 exports.match_username = function(req, res) {
+    if (!req.session.username) {
+        res.render('improper');
+        return;
+    }
     res.send('NOT IMPLEMENTED: Match user POST');
 };

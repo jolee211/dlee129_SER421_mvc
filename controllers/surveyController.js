@@ -211,9 +211,43 @@ exports.setPreferences = function(req, res) {
 
 // Determine number of matches for current user
 function match(req, res) {
-    if (!req.session.username) {
+    let username = req.session.username;
+    if (!username) {
         res.render('improper');
         return;
     }
-    res.send('NOT IMPLEMENTED: Match user POST');
+
+    let answersForCurrentUser = Model.getAllAnswersForUser(username);
+    let userMatches = new Map();
+    answersForCurrentUser.forEach((answerForCurrentUser, i, arr) => {
+        // get all the answers for same question for other users
+        Model.getAllAnswersForQuestion(answerForCurrentUser.questionId)
+            // filter for matching answer
+            .filter(currentAnswer => currentAnswer.answer === answerForCurrentUser.answer)
+            // filter out the user we're matching
+            .filter(currentAnswer => currentAnswer.username != username)
+            // count matches of other users to current user
+            .forEach((currentAnswer, i) => {
+                if (userMatches.has(currentAnswer.username)) {
+                    let matches = userMatches.get(currentAnswer.username);
+                    matches++;
+                    userMatches.set(currentAnswer.username, matches);
+                } else {
+                    userMatches.set(currentAnswer.username, 1);
+                }
+            });
+    });
+    let matches = [];
+    // sort the userMatches map from highest match to lowest
+    let userMatchesSortedDesc = new Map([...userMatches.entries()]
+        // sort by match count
+        .sort((a, b) => b.value - a.value))
+        // add each string to matches array
+        .forEach((val, key) => matches.push(`User: ${key} matched ${val} answers`));
+    console.log(matches);
+    res.render('matches', { 
+        title: 'SER421 MVC Ex Survey Matches', 
+        username: username,
+        matches: matches
+    });
 }

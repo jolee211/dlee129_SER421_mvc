@@ -1,0 +1,11 @@
+extends layout
+
+block heading
+  | Best survey matches for 
+  | !{username}
+  | best-to-worst:
+
+block content
+  ol
+    each val in matches
+      li !{val}

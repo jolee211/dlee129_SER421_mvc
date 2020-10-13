@@ -3,6 +3,7 @@ const VERTICAL = 'vertical';
 const HORIZONTAL = 'horizontal';
 let questions;
 let answers;
+let answersByUsername;
 
 function readJsonFromFile(filename) {
     let rawdata = fs.readFileSync(filename);
@@ -27,14 +28,46 @@ function getKeyFromComposite(username, questionId) {
     return username + questionId;
 }
 
+function readAllAnswersFromFile() {
+    let json = readJsonFromFile('answers.json');
+    answersByUsername = new Map();
+    answersByQuestionId = new Map();
+    answers = json.reduce((map, obj) => {
+        // store each answer in a map (key=username + questionId)
+        map.set(getKeyFromAnswer(obj), obj);
+
+        // store an array of answers by username in another map
+        let arr;
+        let key = obj.username;
+        if (answersByUsername.has(key)) {
+            arr = answersByUsername.get(key);
+            arr.push(obj);
+        } else {
+            arr = [obj];
+        }
+        answersByUsername.set(key, arr);
+
+        // store an array of answers by questionId in another map
+        let arr2;
+        let key2 = obj.questionId;
+        if (answersByQuestionId.has(key2)) {
+            arr2 = answersByQuestionId.get(key2);
+            arr2.push(obj);
+        } else {
+            arr2 = [obj];
+        }
+        answersByQuestionId.set(key2, arr2);
+
+        return map;
+    }, new Map());
+    console.log(answers);
+    console.log(answersByUsername);
+    console.log(answersByQuestionId);
+}
+
 function getAllAnswers() {
     if (!answers) {
-        let json = readJsonFromFile('answers.json');
-        answers = json.reduce((map, obj) => {
-            map.set(getKeyFromAnswer(obj), obj);
-            return map;
-        }, new Map());
-        console.log(answers);
+        readAllAnswersFromFile();
     }
     return answers;
 }
@@ -52,6 +85,21 @@ function getPreviousAnswer(username, questionId) {
     if (savedAnswer) {
         return savedAnswer.answer;
     }
+    return savedAnswer;
+}
+
+function getAllAnswersForUser(username) {
+    if (answersByUsername) {
+        return answersByUsername.get(username);
+    }
+    return [];
+}
+
+function getAllAnswersForQuestion(questionId) {
+    if (answersByQuestionId) {
+        return answersByQuestionId.get(questionId);
+    }
+    return [];
 }
 
 function getChoicesForQuestion(question) {
@@ -80,6 +128,8 @@ function getDefaultRenderingPreference() {
     return HORIZONTAL;
 }
 
+readAllAnswersFromFile();
+
 module.exports.getDefaultRenderingPreference = getDefaultRenderingPreference;
 module.exports.getAllQuestions = getAllQuestions;
 module.exports.getAllAnswers = getAllAnswers;
@@ -88,3 +138,5 @@ module.exports.getChoicesForQuestion = getChoicesForQuestion;
 module.exports.saveAnswer = saveAnswer;
 module.exports.numberOfQuestions = numberOfQuestions;
 module.exports.persistAllAnswers = persistAllAnswers;
+module.exports.getAllAnswersForUser = getAllAnswersForUser;
+module.exports.getAllAnswersForQuestion = getAllAnswersForQuestion;
